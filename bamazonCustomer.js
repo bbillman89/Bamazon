@@ -1,10 +1,11 @@
 //require modules
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-var itemID = [];
 var items = [];
+var custQty;
+var custProductId;
 
-//establish connections to bamazon_DB
+//establish connection to bamazon_DB
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
@@ -20,18 +21,18 @@ connection.connect(function(err){
     displayItems();
     console.log("\n====================\n");
     promptUser();
+    console.log("\n====================\n");
     connection.end();
 })
 
 function displayItems(){
     connection.query("SELECT * FROM products", function(err, res){
-        //console.log(res);
         if (err) throw err;
         for(let i = 0; i < res.length; i++){
-            itemID = res[i].item_id;
-            //console.log("this is itemID" + itemID);
-            //console.log("ID [" + res[i].item_id + "] " + res[i].product_name);
-            items.push("ID [" + res[i].item_id + "] " + res[i].product_name);
+            var a = "ID [" + res[i].item_id + "] " + res[i].product_name + " :price $" + res[i].price;
+            items.push(a);
+            //var b = res[i].stock.quantity;
+            //storeQty.push(b);
         }
     })
 }
@@ -39,24 +40,33 @@ function displayItems(){
 function promptUser(){
     inquirer.prompt([
         {
-        type: "list",
+        type: "input",
         name: "id",
-        message: "Enter the [ID] of the product they would like to buy.",
-        choices: [items]
+        message: "Enter [ID] of product you wish to purchase"
         },
         {
-            type: "number",
-            message: "The second message should ask how many units of the product they would like to buy.",
+            type: "input",
+            message: "How many units would you like to buy?",
             name: "qty"
         }
     ])
     .then(function(res){
-        var a = res.id;
+        var a = isNaN(res.qty); //validate input
+        custQty = res.qty; //store quantity
+        custProductId = res.id; //store product ID of user input
         switch(a){
-            case "":
+            case true:
+            console.log("input must be a number");
+            break;
+            case false:
+            console.log("run a comparison function");
             break;
             default:
             console.log("something went wrong");
         }
     })
+}
+
+function order(){
+    
 }
