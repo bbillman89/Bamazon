@@ -27,8 +27,8 @@ connection.connect(function(err){
 function viewType(){
     inquirer.prompt([
         {
-            type: "list",
-            name: "type",
+            type: "rawlist",
+            name: "action",
             message: "Select Access Type",
             choices: [
                 "Customer",
@@ -37,10 +37,12 @@ function viewType(){
             ]
         }
     ])
-    .then(function(err, res){
-        switch(res){
+    .then(function(res){
+        switch(res.action){
             case "Customer":
-            return "viewing as customer"
+            startOrder();
+            //return "viewing as customer"
+            break;
 
             case "Manager":
             return "manager access"
@@ -57,10 +59,7 @@ function viewType(){
         for(let index of res){
             var a = "ID [" + index.item_id + "] " + index.product_name + " price $" + index.price;
             items.push(a);
-            //var b = res[i].stock.quantity;
-            //storeQty.push(b);
         }
-        //promptUser();
     })
 }
 
@@ -80,10 +79,17 @@ function startOrder(){
         }
     ])
     .then(function(res){
+        connection.query("SELECT item_id, stock_quantity FROM products WHERE ?", function(err, res){
+            if (err) throw err;
+            console.log(res);
+            //for(let index of res){
+    
+            //}
+        })
         var a = isNaN(res.qty); //validate input
         custQty = Number(res.qty); //store quantity
         custProductId = res.id; //store product ID of user input
-        switch(a){
+        /*switch(a){
             case true:
             console.log("input must be a number");
             break;
@@ -92,18 +98,8 @@ function startOrder(){
             break;
             default:
             console.log("something went wrong");
-        }
+        }*/
         console.log(custQty);
         console.log(Number(custProductId[4]));
-    })
-}
-
-function order(){
-    connection.query("SELECT item_id, stock_quantity FROM products", function(err, res){
-        if (err) throw err;
-        console.log(res);
-        //for(let index of res){
-
-        //}
     })
 }
