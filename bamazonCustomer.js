@@ -19,9 +19,9 @@ connection.connect(function(err){
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
     displayItems();
-    console.log("\n====================\n");
-    promptUser();
-    console.log("\n====================\n");
+    //console.log("\n====================\n");
+    //promptUser();
+    //console.log("\n====================\n");
     connection.end();
 })
 
@@ -29,20 +29,22 @@ function displayItems(){
     connection.query("SELECT * FROM products", function(err, res){
         if (err) throw err;
         for(let i = 0; i < res.length; i++){
-            var a = "ID [" + res[i].item_id + "] " + res[i].product_name + " :price $" + res[i].price;
+            var a = "ID [" + res[i].item_id + "] " + res[i].product_name + " price $" + res[i].price;
             items.push(a);
             //var b = res[i].stock.quantity;
             //storeQty.push(b);
         }
+        promptUser();
     })
 }
 
 function promptUser(){
     inquirer.prompt([
         {
-        type: "input",
+        type: "list",
         name: "id",
-        message: "Enter [ID] of product you wish to purchase"
+        message: "Enter [ID] of product you wish to purchase",
+        choices: items
         },
         {
             type: "input",
