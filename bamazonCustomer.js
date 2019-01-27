@@ -18,27 +18,54 @@ var connection = mysql.createConnection({
 connection.connect(function(err){
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
-    displayItems();
-    //console.log("\n====================\n");
-    //promptUser();
-    //console.log("\n====================\n");
+    console.log("\n====================\n");
+    viewType();
     connection.end();
 })
 
-function displayItems(){
+//Select View Type: Customer, Manager or Supervisor
+function viewType(){
+    inquirer.prompt([
+        {
+            type: "list",
+            name: "type",
+            message: "Select Access Type",
+            choices: [
+                "Customer",
+                "Manager",
+                "Supervisor"
+            ]
+        }
+    ])
+    .then(function(err, res){
+        switch(res){
+            case "Customer":
+            return "viewing as customer"
+
+            case "Manager":
+            return "manager access"
+
+            case "Supervisor":
+            return "entered as supervisor";
+
+            default:
+            return "something went wrong"
+        }
+    })
     connection.query("SELECT * FROM products", function(err, res){
         if (err) throw err;
-        for(let i = 0; i < res.length; i++){
-            var a = "ID [" + res[i].item_id + "] " + res[i].product_name + " price $" + res[i].price;
+        for(let index of res){
+            var a = "ID [" + index.item_id + "] " + index.product_name + " price $" + index.price;
             items.push(a);
             //var b = res[i].stock.quantity;
             //storeQty.push(b);
         }
-        promptUser();
+        //promptUser();
     })
 }
 
-function promptUser(){
+//Customer View
+function startOrder(){
     inquirer.prompt([
         {
         type: "list",
@@ -54,21 +81,29 @@ function promptUser(){
     ])
     .then(function(res){
         var a = isNaN(res.qty); //validate input
-        custQty = res.qty; //store quantity
+        custQty = Number(res.qty); //store quantity
         custProductId = res.id; //store product ID of user input
         switch(a){
             case true:
             console.log("input must be a number");
             break;
             case false:
-            console.log("run a comparison function");
+            order();
             break;
             default:
             console.log("something went wrong");
         }
+        console.log(custQty);
+        console.log(Number(custProductId[4]));
     })
 }
 
 function order(){
-    
+    connection.query("SELECT item_id, stock_quantity FROM products", function(err, res){
+        if (err) throw err;
+        console.log(res);
+        //for(let index of res){
+
+        //}
+    })
 }
