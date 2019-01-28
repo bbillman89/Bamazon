@@ -20,7 +20,7 @@ connection.connect(function(err){
     console.log("connected as id " + connection.threadId);
     console.log("\n====================\n");
     viewType();
-    connection.end();
+    //connection.end();
 })
 
 //Select View Type: Customer, Manager or Supervisor
@@ -33,7 +33,8 @@ function viewType(){
             choices: [
                 "Customer",
                 "Manager",
-                "Supervisor"
+                "Supervisor",
+                "End Access",
             ]
         }
     ])
@@ -49,6 +50,9 @@ function viewType(){
 
             case "Supervisor":
             return "entered as supervisor";
+
+            case "End Access":
+            return connection.end();
 
             default:
             return "something went wrong"
@@ -79,17 +83,11 @@ function startOrder(){
         }
     ])
     .then(function(res){
-        connection.query("SELECT item_id, stock_quantity FROM products WHERE ?", function(err, res){
-            if (err) throw err;
-            console.log(res);
-            //for(let index of res){
-    
-            //}
-        })
         var a = isNaN(res.qty); //validate input
         custQty = Number(res.qty); //store quantity
-        custProductId = res.id; //store product ID of user input
-        /*switch(a){
+        custProductId = Number(res.id[4]); //store product ID of user input
+        
+        switch(a){
             case true:
             console.log("input must be a number");
             break;
@@ -98,8 +96,25 @@ function startOrder(){
             break;
             default:
             console.log("something went wrong");
-        }*/
+        }
+
         console.log(custQty);
-        console.log(Number(custProductId[4]));
+        console.log(custProductId);
+    })
+}
+
+function compare(){
+    connection.query("SELECT item_id, stock_quantity FROM products", function(err, req){
+        if (err) throw err;
+        console.log(req);
+        
+        for(let index of req){
+            if(index.item_id === custProductId){
+                console.log("Order has been placed");
+            } else {
+                console.log("Insufficient quantity!");
+            }
+        }
+        
     })
 }
