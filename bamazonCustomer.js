@@ -89,11 +89,18 @@ function startOrder(){
         
         switch(a){
             case true:
-            console.log("input must be a number");
+            console.log("input must be a number\n\n");
+            startOrder();
             break;
+            
             case false:
-            order();
+            console.log("\n====================\n" 
+            + "run the compare function" 
+            + "\n====================\n");
+            //compare();
+            viewType();
             break;
+
             default:
             console.log("something went wrong");
         }
@@ -115,6 +122,6 @@ function compare(){
                 console.log("Insufficient quantity!");
             }
         }
-        
+
     })
 }
