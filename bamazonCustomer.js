@@ -94,10 +94,10 @@ function startOrder(){
             break;
             
             case false:
-            console.log("\n====================\n" 
+            /*console.log("\n====================\n" 
             + "run the compare function" 
-            + "\n====================\n");
-            //compare();
+            + "\n====================\n");*/
+            compare();
             viewType();
             break;
 
@@ -105,23 +105,28 @@ function startOrder(){
             console.log("something went wrong");
         }
 
-        console.log(custQty);
-        console.log(custProductId);
+        console.log("customer qty:"+custQty);
+        console.log("cust product id:"+custProductId);
     })
 }
 
 function compare(){
     connection.query("SELECT item_id, stock_quantity FROM products", function(err, req){
         if (err) throw err;
-        console.log(req);
-        
+        console.log(req);        
+        var dbID;
+        var dbQTY;
         for(let index of req){
-            if(index.item_id === custProductId){
-                console.log("Order has been placed");
-            } else {
-                console.log("Insufficient quantity!");
+            if(index.item_id > custProductId){
+                break
             }
+            dbID = index.item_id;
+            dbQTY = index.stock_quantity;
         }
+        console.log(dbID);
+        console.log(dbQTY);
+
+        
 
     })
 }
