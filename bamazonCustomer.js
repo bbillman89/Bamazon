@@ -17,17 +17,17 @@ var connection = mysql.createConnection({
 //actions on connection
 connection.connect(function(err){
     if (err) throw err;
-    console.log("connected as id " + connection.threadId);
-    console.log("\n====================\n");
+    console.log("\n——————\n" 
+    + "connected as id " + connection.threadId
+    + "\n——————\n");
     viewType();
-    //connection.end();
 })
 
 //Select View Type: Customer, Manager or Supervisor
 function viewType(){
     inquirer.prompt([
         {
-            type: "rawlist",
+            type: "list",
             name: "action",
             message: "Select Access Type",
             choices: [
@@ -42,7 +42,6 @@ function viewType(){
         switch(res.action){
             case "Customer":
             startOrder();
-            //return "viewing as customer"
             break;
 
             case "Manager":
@@ -52,13 +51,18 @@ function viewType(){
             return "entered as supervisor";
 
             case "End Access":
-            return connection.end();
+            console.log("\n——————\n"
+                + "Good Bye"
+                + "\n——————\n");
+            connection.end();
+            break;
 
             default:
             return "something went wrong"
         }
     })
-    connection.query("SELECT * FROM products", function(err, res){
+    var sql = "SELECT * FROM products";
+    connection.query(sql, function(err, res){
         if (err) throw err;
         for(let index of res){
             var a = "ID [" + index.item_id + "] " + index.product_name + " price $" + index.price;
@@ -85,48 +89,61 @@ function startOrder(){
     .then(function(res){
         var a = isNaN(res.qty); //validate input
         custQty = Number(res.qty); //store quantity
-        custProductId = Number(res.id[4]); //store product ID of user input
+        custProductId = Number(res.id[4]); //store product ID of user input / Need better way to pull number from string. Currently only pulling the first number.
         
         switch(a){
             case true:
-            console.log("input must be a number\n\n");
+            console.log("\n——————\n"
+                + "input must be a number"
+                + "\n——————\n");
             startOrder();
             break;
             
             case false:
-            /*console.log("\n====================\n" 
-            + "run the compare function" 
-            + "\n====================\n");*/
             compare();
-            viewType();
             break;
 
             default:
-            console.log("something went wrong");
+            console.log("\n——————\n"
+                + "something went wrong"
+                + "\n——————\n");
+            startOrder();
         }
-
-        console.log("customer qty:"+custQty);
-        console.log("cust product id:"+custProductId);
     })
 }
 
 function compare(){
-    connection.query("SELECT item_id, stock_quantity FROM products", function(err, req){
+    var sql = "SELECT item_id, stock_quantity FROM products";
+    connection.query(sql, function(err, req){
         if (err) throw err;
-        console.log(req);        
         var dbID;
         var dbQTY;
+        var itemRes;
         for(let index of req){
             if(index.item_id > custProductId){
                 break
             }
             dbID = index.item_id;
             dbQTY = index.stock_quantity;
+            itemRes = index;
         }
-        console.log(dbID);
-        console.log(dbQTY);
-
-        
-
+        if(custQty > dbQTY){
+            console.log("\n——————\n"
+                + "Sorry we only have "
+                + dbQTY
+                +" of this product.\n——————\n");
+            connection.end();
+        } else {
+            console.log("\n——————\n"
+                + "Order has been placed!");
+            var mathStuff = dbQTY - custQty;
+            var sql = "UPDATE products SET stock_quantity=" + mathStuff + " WHERE item_id=" + dbID +"";
+            connection.query(sql, function(err, req){
+                console.log("Item Quantity has been updated from " + dbQTY + 
+                " to " + mathStuff
+                + ".\n——————\n");
+            })
+            connection.end();
+        }
     })
 }
