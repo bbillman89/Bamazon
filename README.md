@@ -7,4 +7,4 @@ An Amazon-like CLI storefront. This app takes in orders from customers and deple
 - Supervisor (in development)
 - End
 
-### [Click to watch bamazon in action](https://drive.google.com/file/d/1fFXgsbLOlxkWKCeWctkIk3xMSZh1SZR5/view?usp=sharing)
+### [Click to watch bamazon in action](https://drive.google.com/file/d/1cmTgqmmuAxTi2tPBRPT2ltjRgK9lgJD9/view)
