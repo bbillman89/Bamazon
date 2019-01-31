@@ -45,10 +45,18 @@ function viewType(){
             break;
 
             case "Manager":
-            return "manager access"
+            console.log("\n——————\n"
+                + "Temporarily unavailable"
+                + "\n——————\n");
+            connection.end();
+            break;
 
             case "Supervisor":
-            return "entered as supervisor";
+            console.log("\n——————\n"
+                + "Temporarily unavailable"
+                + "\n——————\n");
+            connection.end();
+            break;
 
             case "End Access":
             console.log("\n——————\n"
